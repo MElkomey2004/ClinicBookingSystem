@@ -3,6 +3,7 @@ using ClinicBookingSystem.DTOs.Appointment;
 using ClinicBookingSystem.DTOs.Clinic;
 using ClinicBookingSystem.DTOs.Doctor;
 using ClinicBookingSystem.DTOs.Specialty;
+using ClinicBookingSystem.DTOs.Users;
 using ClinicBookingSystem.Models;
 
 namespace ClinicBookingSystem.Mappings
@@ -33,6 +34,13 @@ namespace ClinicBookingSystem.Mappings
 			.ForMember(dest => dest.PatientName, opt => opt.MapFrom(src => src.Patient.FullName))
 			.ForMember(dest => dest.DoctorName, opt => opt.MapFrom(src => src.Doctor.User.FullName))
 			.ForMember(dest => dest.ClinicName, opt => opt.MapFrom(src => src.Clinic.Name));
+
+
+			CreateMap<User, UserDto>();
+			CreateMap<CreateUserDto, User>()
+				.ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
+			CreateMap<UpdateUserDto, User>()
+				.ForMember(dest => dest.PasswordHash, opt => opt.Ignore());
 		}
 	}
 }

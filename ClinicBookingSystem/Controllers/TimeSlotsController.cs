@@ -1,5 +1,6 @@
 ﻿using ClinicBookingSystem.DTOs.TimeSlot;
 using ClinicBookingSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +8,7 @@ namespace ClinicBookingSystem.Controllers
 {
 	[Route("api/[controller]")]
 	[ApiController]
+	[Authorize(Policy = "RequireAdminOrDoctorRole")] 
 	public class TimeSlotsController : ControllerBase
 	{
 		private readonly ITimeSlotService _timeSlotService;
@@ -39,6 +41,7 @@ namespace ClinicBookingSystem.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Roles = "Doctor")] // 👈 Only doctors can create
 		public async Task<ActionResult<TimeSlotDto>> Create(CreateTimeSlotDto dto)
 		{
 			var createdSlot = await _timeSlotService.AddAsync(dto);
@@ -46,6 +49,7 @@ namespace ClinicBookingSystem.Controllers
 		}
 
 		[HttpPut("{id}")]
+		[Authorize(Roles = "Doctor")]
 		public async Task<IActionResult> Update(int id, UpdateTimeSlotDto dto)
 		{
 			if (id != dto.Id)
@@ -60,6 +64,7 @@ namespace ClinicBookingSystem.Controllers
 		}
 
 		[HttpDelete("{id}")]
+		[Authorize(Roles = "Doctor")] 
 		public async Task<IActionResult> Delete(int id)
 		{
 			var deleted = await _timeSlotService.DeleteAsync(id);

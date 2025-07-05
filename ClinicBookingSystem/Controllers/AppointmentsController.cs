@@ -1,6 +1,6 @@
 ﻿using ClinicBookingSystem.DTOs.Appointment;
 using ClinicBookingSystem.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicBookingSystem.Controllers
@@ -17,6 +17,7 @@ namespace ClinicBookingSystem.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Roles = "Admin,Doctor")]
 		public async Task<IActionResult> GetAll()
 		{
 			var appointments = await _service.GetAllAsync();
@@ -24,6 +25,7 @@ namespace ClinicBookingSystem.Controllers
 		}
 
 		[HttpGet("{id}")]
+		[Authorize(Roles = "Admin,Doctor")]
 		public async Task<IActionResult> GetById(int id)
 		{
 			var appointment = await _service.GetByIdAsync(id);
@@ -31,6 +33,7 @@ namespace ClinicBookingSystem.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Roles = "Patient")]
 		public async Task<IActionResult> Create([FromBody] CreateAppointmentDto dto)
 		{
 			await _service.AddAsync(dto);
@@ -38,6 +41,7 @@ namespace ClinicBookingSystem.Controllers
 		}
 
 		[HttpPut("{id}")]
+		[Authorize(Roles = "Admin,Doctor")]
 		public async Task<IActionResult> Update(int id, [FromBody] UpdateAppointmentDto dto)
 		{
 			if (id != dto.Id) return BadRequest();
@@ -46,6 +50,7 @@ namespace ClinicBookingSystem.Controllers
 		}
 
 		[HttpDelete("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Delete(int id)
 		{
 			await _service.DeleteAsync(id);

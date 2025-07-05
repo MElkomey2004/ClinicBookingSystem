@@ -2,6 +2,7 @@
 using ClinicBookingSystem.DTOs.Clinic;
 using ClinicBookingSystem.Models;
 using ClinicBookingSystem.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicBookingSystem.Controllers
@@ -20,6 +21,7 @@ namespace ClinicBookingSystem.Controllers
 		}
 
 		[HttpGet]
+		[Authorize]
 		public async Task<IActionResult> GetAll()
 		{
 			var clinics = await _clinicService.GetAllAsync();
@@ -28,6 +30,7 @@ namespace ClinicBookingSystem.Controllers
 		}
 
 		[HttpGet("{id}")]
+		[Authorize]
 		public async Task<IActionResult> GetById(int id)
 		{
 			var clinic = await _clinicService.GetByIdAsync(id);
@@ -39,6 +42,7 @@ namespace ClinicBookingSystem.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Add([FromBody] CreateClinicDto dto)
 		{
 			var clinic = _mapper.Map<Clinic>(dto);
@@ -47,6 +51,7 @@ namespace ClinicBookingSystem.Controllers
 		}
 
 		[HttpPut("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Update(int id, [FromBody] UpdateClinicDto dto)
 		{
 			if (id != dto.Id)
@@ -56,13 +61,14 @@ namespace ClinicBookingSystem.Controllers
 			if (existingClinic == null)
 				return NotFound("Clinic not found");
 
-			_mapper.Map(dto, existingClinic); // map fields into existing clinic object
+			_mapper.Map(dto, existingClinic);
 			await _clinicService.UpdateAsync(existingClinic);
 
 			return Ok(new { message = "Clinic updated" });
 		}
 
 		[HttpDelete("{id}")]
+		[Authorize(Roles = "Admin")]
 		public async Task<IActionResult> Delete(int id)
 		{
 			await _clinicService.DeleteAsync(id);
